@@ -10,6 +10,12 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-journal-bg: #dff5e8;
+  --color-journal-surface: #f9fefb;
+  --color-journal-accent: #9edfb8;
+  --color-journal-border: #c5ecd6;
+  --color-journal-text: #2f5943;
+  --color-journal-muted: #6b9b82;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +28,82 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.journal-page {
+  background: linear-gradient(
+    165deg,
+    var(--color-journal-bg) 0%,
+    #ecfbf2 45%,
+    #e8f7ef 100%
+  );
+  color: var(--color-journal-text);
+  transition: background 0.7s ease;
+}
+
+.journal-page--bright {
+  background: linear-gradient(165deg, #effef6 0%, #f8fffb 45%, #f2fdf8 100%);
+}
+
+.journal-page--dark {
+  background: linear-gradient(165deg, #c3e6d2 0%, #b3dac4 45%, #a6cfb8 100%);
+}
+
+.tiptap-editor {
+  flex: 1;
+  outline: none;
+  color: var(--color-journal-text);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.tiptap-editor:focus {
+  outline: none;
+}
+
+.tiptap-editor p {
+  margin: 0.5em 0;
+}
+
+.tiptap-editor p:first-child {
+  margin-top: 0;
+}
+
+.tiptap-editor h1,
+.tiptap-editor h2,
+.tiptap-editor h3 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1.25em 0 0.5em;
+  color: var(--color-journal-text);
+}
+
+.tiptap-editor h1 {
+  font-size: 1.5rem;
+}
+
+.tiptap-editor h2 {
+  font-size: 1.25rem;
+}
+
+.tiptap-editor ul,
+.tiptap-editor ol {
+  margin: 0.5em 0;
+  padding-left: 1.25rem;
+}
+
+.tiptap-editor blockquote {
+  border-left: 3px solid var(--color-journal-accent);
+  margin: 0.75em 0;
+  padding-left: 1rem;
+  color: var(--color-journal-muted);
+}
+
+.tiptap-editor p.is-editor-empty:first-child::before {
+  color: var(--color-journal-muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
