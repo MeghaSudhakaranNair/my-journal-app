@@ -9,8 +9,7 @@ export type RichTextEditorProps = {
   /** Initial document. Remount with `key` when loading a different entry. */
   defaultContent?: JSONContent | null;
   onChange?: (content: JSONContent) => void;
-  /** Plain text from the editor when the user presses Enter (Shift+Enter inserts a newline). */
-  onSubmitEnter?: (plainText: string) => void;
+  onTextChange?: (plainText: string) => void;
   placeholder?: string;
   className?: string;
   editorClassName?: string;
@@ -20,17 +19,17 @@ export type RichTextEditorProps = {
 export function RichTextEditor({
   defaultContent,
   onChange,
-  onSubmitEnter,
+  onTextChange,
   placeholder = "Start writing…",
   className,
   editorClassName,
   editable = true,
 }: RichTextEditorProps) {
-  const onSubmitEnterRef = useRef(onSubmitEnter);
+  const onTextChangeRef = useRef(onTextChange);
 
   useEffect(() => {
-    onSubmitEnterRef.current = onSubmitEnter;
-  }, [onSubmitEnter]);
+    onTextChangeRef.current = onTextChange;
+  }, [onTextChange]);
 
   const editor = useEditor({
     extensions: [
@@ -47,18 +46,10 @@ export function RichTextEditor({
       attributes: {
         class: ["tiptap-editor", editorClassName].filter(Boolean).join(" "),
       },
-      handleKeyDown: (_view, event) => {
-        if (event.key !== "Enter" || event.shiftKey) return false;
-        if (!onSubmitEnterRef.current) return false;
-
-        event.preventDefault();
-        const text = _view.state.doc.textContent.trim();
-        if (text) onSubmitEnterRef.current(text);
-        return true;
-      },
     },
     onUpdate: ({ editor: currentEditor }) => {
       onChange?.(currentEditor.getJSON());
+      onTextChangeRef.current?.(currentEditor.getText());
     },
   });
 

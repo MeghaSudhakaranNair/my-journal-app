@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.models import AnalyzeSentimentRequest, AnalyzeSentimentResponse
-from app.nlp.analyzer import analyze_sentiment as score_sentiment
+from app.models import MoodResponse, MoodResponseRequest
+from app.nlp.analyzer import analyze_sentiment as measure_mood
 
 app = FastAPI(title="Journal API", version="0.1.0")
 
@@ -23,10 +23,8 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/analyzeSentiment", response_model=AnalyzeSentimentResponse)
-def analyze_sentiment_endpoint(
-    body: AnalyzeSentimentRequest,
-) -> AnalyzeSentimentResponse:
+@app.post("/mood-response", response_model=MoodResponse)
+def create_mood_response(body: MoodResponseRequest) -> MoodResponse:
     text = body.text.strip()
     if not text:
         raise HTTPException(
@@ -34,5 +32,5 @@ def analyze_sentiment_endpoint(
             detail="Field `text` must be a non-empty string.",
         )
 
-    score = score_sentiment(text)
-    return AnalyzeSentimentResponse(sentimentScore=score)
+    score = measure_mood(text)
+    return MoodResponse(moodScore=score)

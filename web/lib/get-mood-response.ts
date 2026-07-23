@@ -1,15 +1,15 @@
-export type AnalyzeSentimentRequest = {
+export type MoodResponseRequest = {
   text: string;
 };
 
-export type AnalyzeSentimentResponse = {
-  sentimentScore: number;
+export type MoodResponse = {
+  moodScore: number;
 };
 
-export class AnalyzeSentimentError extends Error {
+export class MoodResponseError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "AnalyzeSentimentError";
+    this.name = "MoodResponseError";
   }
 }
 
@@ -17,13 +17,15 @@ const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
   "http://127.0.0.1:8000";
 
-export async function analyzeSentiment(
+export async function getMoodResponse(
   text: string,
-): Promise<AnalyzeSentimentResponse> {
-  const response = await fetch(`${API_BASE}/analyzeSentiment`, {
+  signal?: AbortSignal,
+): Promise<MoodResponse> {
+  const response = await fetch(`${API_BASE}/mood-response`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text } satisfies AnalyzeSentimentRequest),
+    body: JSON.stringify({ text } satisfies MoodResponseRequest),
+    signal,
   });
 
   if (!response.ok) {
@@ -38,8 +40,8 @@ export async function analyzeSentiment(
     } catch {
       /* use default message */
     }
-    throw new AnalyzeSentimentError(message);
+    throw new MoodResponseError(message);
   }
 
-  return (await response.json()) as AnalyzeSentimentResponse;
+  return (await response.json()) as MoodResponse;
 }
