@@ -33,9 +33,7 @@ body {
 
 .journal-page {
   --mood-strength: 0;
-  background: linear-gradient(
-    165deg, #c3e6d2 0%, #b3dac4 45%, #a6cfb8 100%
-  );
+  background: linear-gradient(165deg, #c3e6d2 0%, #b3dac4 45%, #a6cfb8 100%);
   box-shadow: inset 0 0 0 100vmax rgba(255, 255, 255, 0);
   color: var(--color-journal-text);
   transition: box-shadow 350ms ease-out;
@@ -43,18 +41,14 @@ body {
 
 .journal-page--happy {
   box-shadow:
-    inset 0 0 0 100vmax
-      rgb(255 255 255 / calc(var(--mood-strength) * 0.46)),
-    inset 0 0 70px
-      rgb(255 255 255 / calc(var(--mood-strength) * 0.52));
+    inset 0 0 0 100vmax rgb(255 255 255 / calc(var(--mood-strength) * 0.46)),
+    inset 0 0 70px rgb(255 255 255 / calc(var(--mood-strength) * 0.52));
 }
 
 .journal-page--sad {
   box-shadow:
-    inset 0 0 0 100vmax
-      rgb(47 89 67 / calc(var(--mood-strength) * 0.44)),
-    inset 0 0 70px
-      rgb(47 89 67 / calc(var(--mood-strength) * 0.5));
+    inset 0 0 0 100vmax rgb(47 89 67 / calc(var(--mood-strength) * 0.44)),
+    inset 0 0 70px rgb(47 89 67 / calc(var(--mood-strength) * 0.5));
 }
 
 @media (prefers-reduced-motion: reduce) {

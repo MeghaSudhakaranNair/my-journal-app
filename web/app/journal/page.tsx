@@ -1,10 +1,7 @@
 "use client";
 
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import {
-  getMoodResponse,
-  MoodResponseError,
-} from "@/lib/get-mood-response";
+import { getMoodResponse, MoodResponseError } from "@/lib/get-mood-response";
 import type { JSONContent } from "@tiptap/react";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -104,10 +101,7 @@ export default function JournalPage() {
     setLiveMoodTracking(nextValue);
 
     try {
-      window.localStorage.setItem(
-        LIVE_MOOD_PREFERENCE_KEY,
-        String(nextValue),
-      );
+      window.localStorage.setItem(LIVE_MOOD_PREFERENCE_KEY, String(nextValue));
     } catch {
       // Live tracking still works for this session without persistence.
     }

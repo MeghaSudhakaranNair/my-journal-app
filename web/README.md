@@ -34,3 +34,43 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## dynamic mood analyzer
+
+[ User Types in Editor ]
+│
+▼
+[ RichTextEditor fires onTextChange ] ──> Updates `editorText` state
+│
+▼
+[ useEffect triggered ] ──> Cancels old 450ms timer & pending HTTP request
+│
+(450ms pause?)
+├── NO ──> User is still typing... (loop repeats)
+└── YES ──> [ Execute getMoodResponse(text) ]
+│
+▼
+[ POST to FastAPI: http://127.0.0.1:8000/mood-response ]
+│
+▼
+[ API returns { moodScore: float } ]
+│
+▼
+[ Normalize & Scale Score ] ──> (-5 to +5 scale)
+│
+▼
+[ Update moodLevel State ]
+│
+▼
+┌─────────────────┴─────────────────┐
+▼ ▼
+Calculates `moodStrength` Sets class `.journal-page--happy`
+(0.0 to 1.0) on inline CSS or `.journal-page--sad`
+│ │
+└─────────────────┬─────────────────┘
+│
+▼
+[ CSS calc() adjusts box-shadow opacity ]
+│
+▼
+[ Browser smoothly transitions color over 350ms ]
