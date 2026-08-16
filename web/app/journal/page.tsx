@@ -2,6 +2,7 @@
 
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { getMoodResponse, MoodResponseError } from "@/lib/get-mood-response";
+import { createClient } from "@/lib/supabase/client";
 import type { JSONContent } from "@tiptap/react";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -28,7 +29,9 @@ type MoodReaction = "happy" | "sad" | null;
 export default function JournalPage() {
   const [liveMoodTracking, setLiveMoodTracking] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
   const [moodLevel, setMoodLevel] = useState(0);
   const [editorText, setEditorText] = useState("");
 
@@ -107,6 +110,27 @@ export default function JournalPage() {
     }
   }, [liveMoodTracking]);
 
+  const handleLogout = useCallback(async () => {
+    setIsLoggingOut(true);
+    setLogoutError(null);
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        setLogoutError(error.message);
+        return;
+      }
+
+      window.location.assign("/");
+    } catch {
+      setLogoutError("We could not log you out. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, []);
+
   return (
     <div
       className={`journal-page flex min-h-full flex-1 flex-col${
@@ -125,32 +149,43 @@ export default function JournalPage() {
             </h1>
           </div>
 
-          <div className="flex items-center justify-center gap-3 text-sm font-medium text-journal-text">
-            <span>Live mood</span>
+          <div className="flex items-center justify-center gap-5 text-sm font-medium text-journal-text">
+            <div className="flex items-center gap-3">
+              <span>Live mood</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={liveMoodTracking}
+                onClick={handleTrackingToggle}
+                className={`relative h-7 w-12 rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-journal-text ${
+                  liveMoodTracking
+                    ? "border-journal-text bg-journal-text"
+                    : "border-journal-muted/50 bg-journal-surface/80"
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute top-1/2 size-5 -translate-y-1/2 rounded-full shadow-sm transition-all ${
+                    liveMoodTracking
+                      ? "left-6 bg-journal-surface"
+                      : "left-1 bg-journal-muted"
+                  }`}
+                />
+                <span className="sr-only">
+                  {liveMoodTracking
+                    ? "Disable live mood tracking"
+                    : "Enable live mood tracking"}
+                </span>
+              </button>
+            </div>
+
             <button
               type="button"
-              role="switch"
-              aria-checked={liveMoodTracking}
-              onClick={handleTrackingToggle}
-              className={`relative h-7 w-12 rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-journal-text ${
-                liveMoodTracking
-                  ? "border-journal-text bg-journal-text"
-                  : "border-journal-muted/50 bg-journal-surface/80"
-              }`}
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="rounded-full border border-journal-border bg-journal-surface/80 px-4 py-2 text-sm font-semibold transition hover:border-journal-muted hover:bg-journal-surface disabled:cursor-wait disabled:opacity-60"
             >
-              <span
-                aria-hidden
-                className={`absolute top-1/2 size-5 -translate-y-1/2 rounded-full shadow-sm transition-all ${
-                  liveMoodTracking
-                    ? "left-6 bg-journal-surface"
-                    : "left-1 bg-journal-muted"
-                }`}
-              />
-              <span className="sr-only">
-                {liveMoodTracking
-                  ? "Disable live mood tracking"
-                  : "Enable live mood tracking"}
-              </span>
+              {isLoggingOut ? "Logging out…" : "Log out"}
             </button>
           </div>
         </header>
@@ -176,8 +211,10 @@ export default function JournalPage() {
         </button>
 
         <p className="sr-only" aria-live="polite">
-          {analyzeError
-            ? analyzeError
+          {logoutError
+            ? logoutError
+            : analyzeError
+              ? analyzeError
             : isAnalyzing
               ? "Reading the mood of your journal entry."
               : ""}
