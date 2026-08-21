@@ -41,10 +41,10 @@ export default function Home() {
               href="/journal"
               className="rounded-full bg-journal-text px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_26px_-10px_rgba(47,89,67,0.75)] transition hover:-translate-y-0.5 hover:bg-[#244b36]"
             >
-              Explore the journal
+              Open your journal
             </Link>
             <span className="text-sm text-journal-muted">
-              No account required for this preview
+              Sign in to keep your entries private
             </span>
           </div>
         </div>
