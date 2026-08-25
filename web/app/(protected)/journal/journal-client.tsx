@@ -30,6 +30,14 @@ function formatJournalDate(date: Date): string {
   }).format(date);
 }
 
+function formatJournalTooltipDate(date: Date): string {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
 type MoodReaction = "happy" | "sad" | null;
 
 export function JournalClient() {
@@ -133,9 +141,15 @@ export function JournalClient() {
     };
   }, [editorText, liveMoodTracking, selectedEntry]);
 
+  useEffect(() => {
+    if (!saveMessage) return;
+
+    const timer = window.setTimeout(() => setSaveMessage(""), 3200);
+    return () => window.clearTimeout(timer);
+  }, [saveMessage]);
+
   const handleEditorTextChange = useCallback((text: string) => {
     setEditorText(text);
-    setSaveMessage("");
     if (!text.trim()) {
       setMoodLevel(0);
       setMoodScore(null);
@@ -207,7 +221,7 @@ export function JournalClient() {
       setEditorKey((current) => current + 1);
       setMoodLevel(0);
       setMoodScore(null);
-      setSaveMessage("Journal entry saved.");
+      setSaveMessage("Journal entry saved");
     } catch (error) {
       setJournalError(
         error instanceof ApiRequestError
@@ -244,6 +258,35 @@ export function JournalClient() {
       } ${isSidebarOpen ? "md:pl-72" : "md:pl-[4.5rem]"}`}
       style={{ "--mood-strength": moodStrength } as CSSProperties}
     >
+      {saveMessage ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="journal-toast fixed top-5 right-4 left-4 z-[60] mx-auto flex w-fit max-w-[calc(100%-2rem)] items-center gap-3 rounded-2xl border border-white/70 bg-journal-surface/95 px-4 py-3 text-journal-text shadow-[0_16px_45px_-18px_rgba(24,61,41,0.65)] backdrop-blur-md sm:right-6 sm:left-auto sm:mx-0"
+        >
+          <span
+            aria-hidden="true"
+            className="grid size-9 shrink-0 place-items-center rounded-full bg-journal-bg text-journal-text"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="size-5">
+              <path
+                d="m7 12.5 3.2 3.2L17.5 8.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+          <span>
+            <span className="block text-sm font-semibold">{saveMessage}</span>
+            <span className="block text-xs text-journal-muted">
+              Your thoughts are safely stored.
+            </span>
+          </span>
+        </div>
+      ) : null}
+
       <button
         type="button"
         aria-label={isSidebarOpen ? "Close journal history" : "Open journal history"}
@@ -376,16 +419,14 @@ export function JournalClient() {
                   key={entry.id}
                   aria-pressed={selectedEntry?.id === entry.id}
                   onClick={() => handleSelectEntry(entry)}
-                  title={entry.plainText}
+                  title={formatJournalTooltipDate(new Date(entry.createdAt))}
                   className={`flex h-11 w-full items-center overflow-hidden rounded-full px-3 text-left text-sm transition focus-visible:outline-2 focus-visible:outline-journal-text ${
                     selectedEntry?.id === entry.id
-                      ? "bg-journal-bg font-semibold text-journal-text"
+                      ? "bg-journal-bg text-journal-text"
                       : "text-journal-text hover:bg-journal-bg/65"
                   }`}
                 >
-                  <p className="truncate">
-                    {entry.plainText}
-                  </p>
+                  <p className="truncate">{entry.plainText}</p>
                 </button>
               ))}
             </div>
@@ -551,10 +592,6 @@ export function JournalClient() {
         {journalError ? (
           <p role="alert" className="text-sm font-medium text-red-700">
             {journalError}
-          </p>
-        ) : saveMessage ? (
-          <p role="status" className="text-sm font-medium text-journal-text">
-            {saveMessage}
           </p>
         ) : null}
 

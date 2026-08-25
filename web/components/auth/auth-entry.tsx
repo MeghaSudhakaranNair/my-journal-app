@@ -132,10 +132,13 @@ export function AuthEntry() {
       }
 
       form.reset();
+      if (authData.session) {
+        window.location.assign("/journal");
+        return;
+      }
+
       setFormMessage(
-        authData.session
-          ? "Account created successfully. You are now signed in."
-          : "Account created. Check your email to confirm your account before logging in.",
+        "Account created. Check your email to confirm your account before logging in.",
       );
     } catch {
       setFormMessage(
@@ -216,10 +219,7 @@ export function AuthEntry() {
         ref={dialogRef}
         aria-labelledby="auth-dialog-title"
         onClose={() => setIsOpen(false)}
-        onCancel={() => setIsOpen(false)}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) closeDialog();
-        }}
+        onCancel={(event) => event.preventDefault()}
         className="m-auto max-h-[min(90vh,760px)] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-3xl border border-white/70 bg-[#f8fdf9] p-0 text-journal-text shadow-[0_30px_90px_-25px_rgba(24,61,41,0.55)] backdrop:bg-[#173c2a]/45 backdrop:backdrop-blur-sm"
       >
         <div className="sticky top-0 z-10 flex items-start justify-between border-b border-journal-border/80 bg-[#f8fdf9]/95 px-5 py-5 backdrop-blur sm:px-7">
