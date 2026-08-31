@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Sentiment model evaluation from V1 to V3</title>
+  <desc id="desc">Grouped bar chart comparing accuracy, macro precision, macro recall, and macro F1 for three SetFit models.</desc>
+  <rect width="1200" height="760" rx="24" fill="#fbfaf7"/>
+  <text x="70" y="58" font-family="system-ui, sans-serif" font-size="30" font-weight="700" fill="#292524">Sentiment model evaluation</text>
+  <text x="70" y="88" font-family="system-ui, sans-serif" font-size="16" fill="#78716c">SetFit + BAAI/bge-small-en-v1.5 · each version evaluated on its own test split</text>
+
+  <g stroke="#dedbd5" stroke-width="1">
+    <line x1="90" y1="600" x2="1135" y2="600"/>
+    <line x1="90" y1="500" x2="1135" y2="500"/>
+    <line x1="90" y1="400" x2="1135" y2="400"/>
+    <line x1="90" y1="300" x2="1135" y2="300"/>
+    <line x1="90" y1="200" x2="1135" y2="200"/>
+    <line x1="90" y1="100" x2="1135" y2="100"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="13" fill="#78716c" text-anchor="end">
+    <text x="80" y="605">0%</text><text x="80" y="505">20%</text><text x="80" y="405">40%</text>
+    <text x="80" y="305">60%</text><text x="80" y="205">80%</text><text x="80" y="105">100%</text>
+  </g>
+
+  <!-- V1: 12 test samples -->
+  <g>
+    <rect x="170" y="141.7" width="48" height="458.3" rx="7" fill="#5b8def"/>
+    <rect x="224" y="133.4" width="48" height="466.6" rx="7" fill="#8b6fc0"/>
+    <rect x="278" y="141.7" width="48" height="458.3" rx="7" fill="#49a078"/>
+    <rect x="332" y="142.4" width="48" height="457.6" rx="7" fill="#e08b47"/>
+    <text x="275" y="632" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V1</text>
+    <text x="275" y="654" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#78716c">n = 12</text>
+  </g>
+
+  <!-- V2: 25 test samples -->
+  <g>
+    <rect x="500" y="140" width="48" height="460" rx="7" fill="#5b8def"/>
+    <rect x="554" y="133.4" width="48" height="466.6" rx="7" fill="#8b6fc0"/>
+    <rect x="608" y="137.1" width="48" height="462.9" rx="7" fill="#49a078"/>
+    <rect x="662" y="139.4" width="48" height="460.6" rx="7" fill="#e08b47"/>
+    <text x="605" y="632" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V2</text>
+    <text x="605" y="654" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#78716c">n = 25</text>
+  </g>
+
+  <!-- V3: 50 test samples -->
+  <g>
+    <rect x="830" y="100" width="48" height="500" rx="7" fill="#5b8def"/>
+    <rect x="884" y="100" width="48" height="500" rx="7" fill="#8b6fc0"/>
+    <rect x="938" y="100" width="48" height="500" rx="7" fill="#49a078"/>
+    <rect x="992" y="100" width="48" height="500" rx="7" fill="#e08b47"/>
+    <text x="935" y="632" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V3</text>
+    <text x="935" y="654" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#78716c">n = 50</text>
+  </g>
+
+  <g font-family="system-ui, sans-serif" font-size="14" fill="#44403c">
+    <rect x="220" y="697" width="16" height="16" rx="3" fill="#5b8def"/><text x="244" y="710">Accuracy</text>
+    <rect x="410" y="697" width="16" height="16" rx="3" fill="#8b6fc0"/><text x="434" y="710">Macro precision</text>
+    <rect x="640" y="697" width="16" height="16" rx="3" fill="#49a078"/><text x="664" y="710">Macro recall</text>
+    <rect x="840" y="697" width="16" height="16" rx="3" fill="#e08b47"/><text x="864" y="710">Macro F1</text>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">Challenge-set model selection</title>
+  <desc id="desc">Grouped bar chart comparing accuracy, macro F1, and negative recall for V4 models trained for three, five, and eight epochs.</desc>
+  <rect width="1200" height="780" rx="24" fill="#fbfaf7"/>
+  <text x="70" y="58" font-family="system-ui, sans-serif" font-size="30" font-weight="700" fill="#292524">Challenge-set model selection</text>
+  <text x="70" y="88" font-family="system-ui, sans-serif" font-size="16" fill="#78716c">30 unseen multi-sentence examples · 10 per sentiment class</text>
+
+  <g stroke="#dedbd5" stroke-width="1">
+    <line x1="90" y1="610" x2="1135" y2="610"/>
+    <line x1="90" y1="510" x2="1135" y2="510"/>
+    <line x1="90" y1="410" x2="1135" y2="410"/>
+    <line x1="90" y1="310" x2="1135" y2="310"/>
+    <line x1="90" y1="210" x2="1135" y2="210"/>
+    <line x1="90" y1="110" x2="1135" y2="110"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="13" fill="#78716c" text-anchor="end">
+    <text x="80" y="615">0%</text><text x="80" y="515">20%</text><text x="80" y="415">40%</text>
+    <text x="80" y="315">60%</text><text x="80" y="215">80%</text><text x="80" y="115">100%</text>
+  </g>
+
+  <g>
+    <rect x="180" y="160" width="56" height="450" rx="7" fill="#5b8def"/>
+    <rect x="246" y="160.9" width="56" height="449.1" rx="7" fill="#e08b47"/>
+    <rect x="312" y="160" width="56" height="450" rx="7" fill="#49a078"/>
+    <text x="274" y="646" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V4-E3</text>
+    <text x="274" y="670" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#78716c">27/30 correct</text>
+  </g>
+
+  <g>
+    <rect x="500" y="176.7" width="56" height="433.3" rx="7" fill="#5b8def"/>
+    <rect x="566" y="177.6" width="56" height="432.4" rx="7" fill="#e08b47"/>
+    <rect x="632" y="210" width="56" height="400" rx="7" fill="#49a078"/>
+    <text x="594" y="646" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V4-E5</text>
+    <text x="594" y="670" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#78716c">26/30 correct</text>
+  </g>
+
+  <g>
+    <rect x="820" y="143.3" width="56" height="466.7" rx="7" fill="#5b8def"/>
+    <rect x="886" y="143.3" width="56" height="466.7" rx="7" fill="#e08b47"/>
+    <rect x="952" y="160" width="56" height="450" rx="7" fill="#49a078"/>
+    <text x="914" y="646" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#292524">V4-E8</text>
+    <text x="914" y="670" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#78716c">28/30 correct · selected</text>
+  </g>
+
+  <g font-family="system-ui, sans-serif" font-size="14" fill="#44403c">
+    <rect x="290" y="720" width="17" height="17" rx="3" fill="#5b8def"/><text x="316" y="734">Accuracy</text>
+    <rect x="500" y="720" width="17" height="17" rx="3" fill="#e08b47"/><text x="526" y="734">Macro F1</text>
+    <rect x="700" y="720" width="17" height="17" rx="3" fill="#49a078"/><text x="726" y="734">Negative recall</text>
+  </g>
+</svg>

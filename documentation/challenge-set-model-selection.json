@@ -1,0 +1,39 @@
+[
+  {
+    "model": "journal-sentiment-v4-e3",
+    "epochs": 3,
+    "test_samples": 30,
+    "correct": 27,
+    "accuracy": 0.9,
+    "macro_precision": 0.8993265993265993,
+    "macro_recall": 0.9,
+    "macro_f1": 0.8981620718462824,
+    "negative_recall": 0.9,
+    "confusion_matrix": [[9, 0, 1], [0, 10, 0], [1, 1, 8]]
+  },
+  {
+    "model": "journal-sentiment-v4-e5",
+    "epochs": 5,
+    "test_samples": 30,
+    "correct": 26,
+    "accuracy": 0.8666666666666667,
+    "macro_precision": 0.8659932659932661,
+    "macro_recall": 0.8666666666666667,
+    "macro_f1": 0.8648287385129491,
+    "negative_recall": 0.8,
+    "confusion_matrix": [[8, 0, 2], [0, 10, 0], [1, 1, 8]]
+  },
+  {
+    "model": "journal-sentiment-v4-e8",
+    "epochs": 8,
+    "test_samples": 30,
+    "correct": 28,
+    "accuracy": 0.9333333333333333,
+    "macro_precision": 0.9333333333333332,
+    "macro_recall": 0.9333333333333332,
+    "macro_f1": 0.9333333333333332,
+    "negative_recall": 0.9,
+    "confusion_matrix": [[9, 0, 1], [0, 10, 0], [1, 0, 9]]
+  }
+]
+
