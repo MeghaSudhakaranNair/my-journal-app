@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from starlette.concurrency import run_in_threadpool
 
 from app.auth import AuthenticatedUser, require_user
 from app.config import logger
 from app.database import supabase_data_request
 from app.models import JournalEntry, JournalEntryCreate
+from app.nlp.setfit_analyzer import SentimentModelError, SentimentResult
+from app.nlp.setfit_analyzer import analyze_submitted_sentiment
 
 
 router = APIRouter()
@@ -20,6 +23,12 @@ def journal_entry_from_row(row: dict) -> JournalEntry:
         content=row["content"],
         plainText=row["plain_text"],
         moodScore=row.get("mood_score"),
+        sentimentLabel=row.get("sentiment_label"),
+        sentimentConfidence=row.get("sentiment_confidence"),
+        sentimentScores=row.get("sentiment_scores"),
+        sentimentModel=row.get("sentiment_model"),
+        sentimentChunks=row.get("sentiment_chunks"),
+        sentimentTokens=row.get("sentiment_tokens"),
         createdAt=row["created_at"],
         updatedAt=row["updated_at"],
     )
@@ -49,7 +58,36 @@ async def add_journal_entry(
         len(plain_text),
         body.moodScore,
     )
-    logger.debug("Add journal request body=%r", body.model_dump())
+
+    sentiment: SentimentResult | None = None
+    try:
+        sentiment = await run_in_threadpool(
+            analyze_submitted_sentiment,
+            plain_text,
+        )
+    except SentimentModelError:
+        logger.exception(
+            "Sentiment analysis unavailable; saving journal without analysis "
+            "user_id=%s plain_text_length=%s",
+            user.id,
+            len(plain_text),
+        )
+    except Exception:
+        logger.exception(
+            "Unexpected sentiment analysis error; saving journal without analysis "
+            "user_id=%s plain_text_length=%s",
+            user.id,
+            len(plain_text),
+        )
+
+    sentiment_values = {
+        "sentiment_label": sentiment.label if sentiment else None,
+        "sentiment_confidence": sentiment.confidence if sentiment else None,
+        "sentiment_scores": sentiment.scores if sentiment else None,
+        "sentiment_model": sentiment.model_version if sentiment else None,
+        "sentiment_chunks": sentiment.chunks_analyzed if sentiment else None,
+        "sentiment_tokens": sentiment.tokens_analyzed if sentiment else None,
+    }
 
     response = await supabase_data_request(
         "POST",
@@ -60,6 +98,7 @@ async def add_journal_entry(
             "content": body.content,
             "plain_text": plain_text,
             "mood_score": body.moodScore,
+            **sentiment_values,
         },
         prefer="return=representation",
     )
@@ -83,7 +122,9 @@ async def get_journal_entries(
         user,
         params={
             "select": (
-                "id,user_id,content,plain_text,mood_score,created_at,updated_at"
+                "id,user_id,content,plain_text,mood_score,sentiment_label,"
+                "sentiment_confidence,sentiment_scores,sentiment_model,"
+                "sentiment_chunks,sentiment_tokens,created_at,updated_at"
             ),
             "order": "created_at.desc",
             "limit": limit,

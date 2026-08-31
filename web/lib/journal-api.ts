@@ -1,12 +1,22 @@
 import { authenticatedApiFetch } from "@/lib/api/client";
 import type { JSONContent } from "@tiptap/react";
 
+export type SentimentLabel = "negative" | "neutral" | "positive";
+
+export type SentimentScores = Record<SentimentLabel, number>;
+
 export type JournalEntry = {
   id: string;
   userId: string;
   content: JSONContent;
   plainText: string;
   moodScore: number | null;
+  sentimentLabel: SentimentLabel | null;
+  sentimentConfidence: number | null;
+  sentimentScores: SentimentScores | null;
+  sentimentModel: string | null;
+  sentimentChunks: number | null;
+  sentimentTokens: number | null;
   createdAt: string;
   updatedAt: string;
 };

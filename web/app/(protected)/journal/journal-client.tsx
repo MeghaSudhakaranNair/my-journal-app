@@ -1,6 +1,7 @@
 "use client";
 
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { TeddyReaction } from "@/components/journal/teddy-reaction";
 import { ApiRequestError } from "@/lib/api/client";
 import { getMoodResponse } from "@/lib/get-mood-response";
 import {
@@ -9,6 +10,10 @@ import {
   type JournalEntry,
 } from "@/lib/journal-api";
 import { createClient } from "@/lib/supabase/client";
+import {
+  getTeddyReaction,
+  type TeddyReaction as TeddyReactionType,
+} from "@/lib/teddy-reaction";
 import type { JSONContent } from "@tiptap/react";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -20,6 +25,7 @@ const EMPTY_DOC: JSONContent = {
 
 const LIVE_MOOD_PREFERENCE_KEY = "journal-live-mood-tracking";
 const MOOD_ANALYSIS_DELAY_MS = 450;
+const TEDDY_REACTION_DURATION_MS = 5000;
 
 function formatJournalDate(date: Date): string {
   return new Intl.DateTimeFormat(undefined, {
@@ -53,6 +59,8 @@ export function JournalClient() {
   const [saveMessage, setSaveMessage] = useState("");
   const [moodLevel, setMoodLevel] = useState(0);
   const [moodScore, setMoodScore] = useState<number | null>(null);
+  const [teddyReaction, setTeddyReaction] =
+    useState<TeddyReactionType | null>(null);
   const [editorText, setEditorText] = useState("");
   const [editorContent, setEditorContent] = useState<JSONContent>(EMPTY_DOC);
   const [editorKey, setEditorKey] = useState(0);
@@ -148,6 +156,16 @@ export function JournalClient() {
     return () => window.clearTimeout(timer);
   }, [saveMessage]);
 
+  useEffect(() => {
+    if (!teddyReaction) return;
+
+    const timer = window.setTimeout(
+      () => setTeddyReaction(null),
+      TEDDY_REACTION_DURATION_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [teddyReaction]);
+
   const handleEditorTextChange = useCallback((text: string) => {
     setEditorText(text);
     if (!text.trim()) {
@@ -202,6 +220,7 @@ export function JournalClient() {
     const plainText = editorText.trim();
     setJournalError(null);
     setSaveMessage("");
+    setTeddyReaction(null);
 
     if (!plainText) {
       setJournalError("Write something before saving your journal entry.");
@@ -221,6 +240,7 @@ export function JournalClient() {
       setEditorKey((current) => current + 1);
       setMoodLevel(0);
       setMoodScore(null);
+      setTeddyReaction(getTeddyReaction(savedEntry.sentimentLabel));
       setSaveMessage("Journal entry saved");
     } catch (error) {
       setJournalError(
@@ -240,6 +260,7 @@ export function JournalClient() {
     }
     setJournalError(null);
     setSaveMessage("");
+    setTeddyReaction(null);
   }, []);
 
   const handleNewEntry = useCallback(() => {
@@ -249,6 +270,7 @@ export function JournalClient() {
     }
     setJournalError(null);
     setSaveMessage("");
+    setTeddyReaction(null);
   }, []);
 
   return (
@@ -257,6 +279,7 @@ export function JournalClient() {
         moodReaction ? ` journal-page--${moodReaction}` : ""
       } ${isSidebarOpen ? "md:pl-72" : "md:pl-[4.5rem]"}`}
       style={{ "--mood-strength": moodStrength } as CSSProperties}
+      data-teddy-reaction={teddyReaction ?? undefined}
     >
       {saveMessage ? (
         <div
@@ -286,6 +309,8 @@ export function JournalClient() {
           </span>
         </div>
       ) : null}
+
+      <TeddyReaction reaction={teddyReaction} />
 
       <button
         type="button"
