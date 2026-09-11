@@ -7,7 +7,6 @@ from threading import Lock
 from typing import Any
 
 import numpy as np
-from setfit import SetFitModel
 
 from app.config import (
     HF_TOKEN,
@@ -91,8 +90,13 @@ def _model_source() -> tuple[str, dict[str, str]]:
 
 
 @lru_cache(maxsize=1)
-def get_sentiment_model() -> SetFitModel:
+def get_sentiment_model() -> Any:
     """Load and cache the selected SetFit model for the life of this process."""
+    # Importing SetFit also imports PyTorch and Transformers. Keep that work out
+    # of application startup so deployment platforms can bind the HTTP port
+    # before the model stack is needed for the first sentiment request.
+    from setfit import SetFitModel
+
     model_source, load_options = _model_source()
     try:
         model = SetFitModel.from_pretrained(model_source, **load_options)
