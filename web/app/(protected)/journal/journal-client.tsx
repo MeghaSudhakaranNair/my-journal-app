@@ -25,7 +25,6 @@ const EMPTY_DOC: JSONContent = {
 
 const LIVE_MOOD_PREFERENCE_KEY = "journal-live-mood-tracking";
 const MOOD_ANALYSIS_DELAY_MS = 450;
-const TEDDY_REACTION_DURATION_MS = 5000;
 
 function formatJournalDate(date: Date): string {
   return new Intl.DateTimeFormat(undefined, {
@@ -95,7 +94,10 @@ export function JournalClient() {
     async function loadEntries() {
       try {
         const savedEntries = await getJournalEntries();
-        if (active) setEntries(savedEntries);
+        if (active) {
+          setEntries(savedEntries);
+          setTeddyReaction(null);
+        }
       } catch (error) {
         if (process.env.NODE_ENV !== "production") {
           console.error("[journal] Failed to load entries", error);
@@ -156,16 +158,6 @@ export function JournalClient() {
     return () => window.clearTimeout(timer);
   }, [saveMessage]);
 
-  useEffect(() => {
-    if (!teddyReaction) return;
-
-    const timer = window.setTimeout(
-      () => setTeddyReaction(null),
-      TEDDY_REACTION_DURATION_MS,
-    );
-    return () => window.clearTimeout(timer);
-  }, [teddyReaction]);
-
   const handleEditorTextChange = useCallback((text: string) => {
     setEditorText(text);
     if (!text.trim()) {
@@ -220,7 +212,6 @@ export function JournalClient() {
     const plainText = editorText.trim();
     setJournalError(null);
     setSaveMessage("");
-    setTeddyReaction(null);
 
     if (!plainText) {
       setJournalError("Write something before saving your journal entry.");
@@ -260,7 +251,7 @@ export function JournalClient() {
     }
     setJournalError(null);
     setSaveMessage("");
-    setTeddyReaction(null);
+    setTeddyReaction(getTeddyReaction(entry.sentimentLabel));
   }, []);
 
   const handleNewEntry = useCallback(() => {
@@ -277,7 +268,11 @@ export function JournalClient() {
     <div
       className={`journal-page flex min-h-full flex-1 flex-col transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:duration-0${
         moodReaction ? ` journal-page--${moodReaction}` : ""
-      } ${isSidebarOpen ? "md:pl-72" : "md:pl-[4.5rem]"}`}
+      } ${
+        isSidebarOpen
+          ? "journal-page--sidebar-open md:pl-72"
+          : "md:pl-[4.5rem]"
+      }`}
       style={{ "--mood-strength": moodStrength } as CSSProperties}
       data-teddy-reaction={teddyReaction ?? undefined}
     >
@@ -309,8 +304,6 @@ export function JournalClient() {
           </span>
         </div>
       ) : null}
-
-      <TeddyReaction reaction={teddyReaction} />
 
       <button
         type="button"
@@ -573,7 +566,7 @@ export function JournalClient() {
         </footer>
       </aside>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 pt-20 pb-10 sm:px-6 sm:py-10 md:pt-10">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 pt-20 pb-10 sm:px-6 sm:py-10 md:pt-10 lg:-translate-x-8">
         <header>
           <div className="space-y-1 text-center sm:text-left">
             <p className="text-sm font-medium tracking-wide text-journal-muted uppercase">
@@ -587,8 +580,9 @@ export function JournalClient() {
 
         <section
           aria-label="Journal entry"
-          className="journal-editor-shell flex min-h-[min(50vh,420px)] flex-1 flex-col overflow-hidden rounded-3xl border border-journal-border bg-journal-surface shadow-[0_8px_32px_-8px_rgba(47,89,67,0.12)]"
+          className="journal-editor-shell relative flex min-h-[min(50vh,420px)] flex-1 flex-col overflow-visible rounded-3xl border border-journal-border bg-journal-surface shadow-[0_8px_32px_-8px_rgba(47,89,67,0.12)]"
         >
+          <TeddyReaction reaction={teddyReaction} />
           <RichTextEditor
             key={
               selectedEntry ? `saved-${selectedEntry.id}` : `draft-${editorKey}`

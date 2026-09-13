@@ -6,19 +6,16 @@ type TeddyReactionProps = {
 
 const REACTION_COPY: Record<
   TeddyReactionType,
-  { eyebrow: string; message: string }
+  { message: string }
 > = {
   happy: {
-    eyebrow: "A bright moment",
-    message: "Holding onto this bright moment with you.",
+    message: "Keep this warmth close—you created a moment worth remembering.",
   },
   calm: {
-    eyebrow: "A quiet check-in",
-    message: "Thank you for taking a moment to check in.",
+    message: "Quiet days count too. Notice one small thing that felt steady.",
   },
   supportive: {
-    eyebrow: "A gentle reminder",
-    message: "Be gentle with yourself today.",
+    message: "You made it through this moment. Be gentle with yourself as you take the next step.",
   },
 };
 
@@ -29,6 +26,9 @@ export function TeddyReaction({ reaction }: TeddyReactionProps) {
 
   return (
     <aside className={`teddy-reaction teddy-reaction--${reaction}`}>
+      <div className="teddy-reaction__copy">
+        <p className="teddy-reaction__message">{copy.message}</p>
+      </div>
       <div className="teddy-reaction__illustration" aria-hidden="true">
         <svg viewBox="0 0 220 220" className="teddy-reaction__svg">
           <g className="teddy-reaction__bear">
@@ -75,10 +75,6 @@ export function TeddyReaction({ reaction }: TeddyReactionProps) {
         </svg>
       </div>
 
-      <div className="teddy-reaction__copy">
-        <p className="teddy-reaction__eyebrow">{copy.eyebrow}</p>
-        <p className="teddy-reaction__message">{copy.message}</p>
-      </div>
     </aside>
   );
 }

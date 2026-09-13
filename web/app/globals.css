@@ -145,22 +145,6 @@ body {
   }
 }
 
-@keyframes teddy-reaction-lifecycle {
-  0% {
-    opacity: 0;
-    transform: translateY(1rem) scale(0.96);
-  }
-  8%,
-  86% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(0.5rem) scale(0.98);
-  }
-}
-
 @keyframes teddy-happy-bounce {
   0%,
   100% {
@@ -217,39 +201,28 @@ body {
 }
 
 .teddy-reaction {
-  position: fixed;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  z-index: 55;
-  display: flex;
-  width: min(22rem, calc(100vw - 3rem));
-  align-items: center;
-  gap: 0.75rem;
-  overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 0.78);
-  border-radius: 1.5rem;
-  background: rgb(249 254 251 / 0.96);
-  padding: 0.75rem 1rem 0.75rem 0.65rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  width: 0;
+  height: 0;
   color: var(--color-journal-text);
-  box-shadow: 0 22px 55px -24px rgb(24 61 41 / 0.72);
   pointer-events: none;
-  backdrop-filter: blur(14px);
-  animation: teddy-reaction-lifecycle 5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: journal-toast-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .teddy-reaction::before {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 18% 20%, rgb(223 245 232 / 0.88), transparent 48%);
-  content: "";
-  pointer-events: none;
+  content: none;
 }
 
 .teddy-reaction__illustration {
-  position: relative;
+  position: absolute;
+  top: -2rem;
+  right: -7rem;
   z-index: 1;
-  width: 6.25rem;
-  flex: none;
+  width: 11rem;
+  filter: drop-shadow(0 16px 14px rgb(24 61 41 / 0.2));
 }
 
 .teddy-reaction__svg {
@@ -322,25 +295,69 @@ body {
 }
 
 .teddy-reaction__copy {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
+  position: absolute;
+  top: -4rem;
+  left: 5.5rem;
+  z-index: 2;
+  display: grid;
+  width: 12.5rem;
+  min-height: 6.25rem;
+  place-items: center;
+  border: 1px solid rgb(126 161 180 / 0.46);
+  border-radius: 48% 52% 45% 55% / 54% 46% 55% 45%;
+  background:
+    radial-gradient(circle at 28% 22%, rgb(255 255 255 / 0.98), transparent 42%),
+    linear-gradient(145deg, rgb(250 254 255 / 0.98), rgb(232 246 252 / 0.96));
+  padding: 1.55rem 1.7rem;
+  text-align: center;
+  box-shadow: 0 12px 28px -20px rgb(70 116 140 / 0.45);
+  transform: translateY(0) scale(1);
+  transform-origin: bottom left;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 850ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0s;
 }
 
-.teddy-reaction__eyebrow {
-  margin: 0 0 0.2rem;
-  color: var(--color-journal-muted);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+.journal-page--sidebar-open .teddy-reaction__copy {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(0.65rem) scale(0.96);
+  transition:
+    opacity 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 750ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 750ms;
+}
+
+.teddy-reaction__copy::before,
+.teddy-reaction__copy::after {
+  position: absolute;
+  border: 1px solid rgb(126 161 180 / 0.46);
+  border-radius: 999px;
+  background: linear-gradient(145deg, #fbfeff, #e8f6fc);
+  content: "";
+}
+
+.teddy-reaction__copy::before {
+  bottom: 1.25rem;
+  left: -1.15rem;
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.teddy-reaction__copy::after {
+  bottom: 0.7rem;
+  left: -1.75rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-width: 1px;
 }
 
 .teddy-reaction__message {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .teddy-reaction--happy .teddy-reaction__bear {
@@ -384,16 +401,20 @@ body {
   fill: #ad7952;
 }
 
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   .teddy-reaction {
-    right: 1rem;
-    bottom: 1rem;
-    left: 1rem;
-    width: auto;
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .teddy-reaction__illustration {
+    right: -1.25rem;
   }
 
-  .teddy-reaction__illustration {
-    width: 5.5rem;
+  .teddy-reaction__copy {
+    left: auto;
+    right: 0;
   }
 }
 
@@ -405,5 +426,9 @@ body {
   .teddy-reaction__sparkles {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
+  }
+
+  .teddy-reaction__copy {
+    transition-duration: 0.01ms;
   }
 }
