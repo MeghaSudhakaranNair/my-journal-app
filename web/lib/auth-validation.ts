@@ -2,6 +2,22 @@ import { z } from "zod";
 
 const optionalText = z.string().trim().optional();
 
+const profileText = (maximum: number, label: string) =>
+  z.string().trim().max(maximum, `${label} must be ${maximum} characters or fewer.`);
+
+const phoneSchema = z
+  .string()
+  .trim()
+  .max(32, "Phone number is too long.")
+  .refine(
+    (phone) => {
+      if (!phone) return true;
+      const digitCount = phone.replace(/\D/g, "").length;
+      return /^\+?[\d\s().-]+$/.test(phone) && digitCount >= 7 && digitCount <= 15;
+    },
+    { message: "Enter a valid phone number containing 7 to 15 digits." },
+  );
+
 export const passwordSchema = z
   .string()
   .min(1, "Password is required.")
@@ -29,23 +45,7 @@ export const registrationSchema = z
       .trim()
       .min(1, "Email is required for account recovery.")
       .email("Enter a valid email address, such as you@example.com."),
-    phone: z
-      .string()
-      .trim()
-      .refine(
-        (phone) => {
-          if (!phone) return true;
-          const digitCount = phone.replace(/\D/g, "").length;
-          return (
-            /^\+?[\d\s().-]+$/.test(phone) &&
-            digitCount >= 7 &&
-            digitCount <= 15
-          );
-        },
-        {
-          message: "Enter a valid phone number containing 7 to 15 digits.",
-        },
-      ),
+    phone: phoneSchema,
     addressLine1: optionalText,
     addressLine2: optionalText,
     city: optionalText,
@@ -65,6 +65,19 @@ export const loginSchema = z.object({
     .min(1, "Email is required.")
     .email("Enter a valid email address, such as you@example.com."),
   password: z.string().min(1, "Password is required."),
+});
+
+export const profileUpdateSchema = z.object({
+  firstName: profileText(100, "First name"),
+  lastName: profileText(100, "Last name"),
+  username: z.string().trim().min(1, "Username is required.").max(100, "Username must be 100 characters or fewer."),
+  phone: phoneSchema,
+  addressLine1: profileText(200, "Address line 1"),
+  addressLine2: profileText(200, "Address line 2"),
+  city: profileText(100, "City"),
+  region: profileText(100, "State or region"),
+  postalCode: profileText(32, "Postal code"),
+  country: profileText(100, "Country"),
 });
 
 export function validationErrorsByField(

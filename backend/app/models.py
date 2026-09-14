@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class MoodResponseRequest(BaseModel):
@@ -44,3 +44,44 @@ class JournalEntry(BaseModel):
     sentimentTokens: Optional[int] = Field(default=None, ge=1)
     createdAt: datetime
     updatedAt: datetime
+
+
+class ProfileUpdate(BaseModel):
+    firstName: str = Field(default="", max_length=100)
+    lastName: str = Field(default="", max_length=100)
+    username: str = Field(min_length=1, max_length=100)
+    phone: str = Field(default="", max_length=32)
+    addressLine1: str = Field(default="", max_length=200)
+    addressLine2: str = Field(default="", max_length=200)
+    city: str = Field(default="", max_length=100)
+    region: str = Field(default="", max_length=100)
+    postalCode: str = Field(default="", max_length=32)
+    country: str = Field(default="", max_length=100)
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, value: str) -> str:
+        phone = value.strip()
+        if not phone:
+            return phone
+        digits = "".join(character for character in phone if character.isdigit())
+        allowed = all(character.isdigit() or character in "+-(). " for character in phone)
+        if not allowed or not phone.startswith("+") and "+" in phone or not 7 <= len(digits) <= 15:
+            raise ValueError("Enter a valid phone number containing 7 to 15 digits.")
+        return phone
+
+
+class Profile(BaseModel):
+    id: str
+    email: str
+    firstName: str
+    lastName: str
+    username: str
+    phone: str
+    addressLine1: str
+    addressLine2: str
+    city: str
+    region: str
+    postalCode: str
+    country: str
+    emailChangePending: bool = False

@@ -15,6 +15,7 @@ import {
   type TeddyReaction as TeddyReactionType,
 } from "@/lib/teddy-reaction";
 import type { JSONContent } from "@tiptap/react";
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -409,6 +410,39 @@ export function JournalClient() {
             </svg>
             {isSidebarOpen ? <span>New entry</span> : null}
           </button>
+
+          <Link
+            href="/profile"
+            aria-label="Open profile"
+            title="Profile"
+            className={`mt-2 flex h-11 items-center rounded-full text-sm font-semibold text-journal-text transition hover:bg-journal-bg focus-visible:outline-2 focus-visible:outline-journal-text ${
+              isSidebarOpen
+                ? "w-full gap-3 px-3"
+                : "w-11 justify-center border border-journal-border bg-journal-surface/90 px-0 shadow-md backdrop-blur hover:-translate-y-0.5 hover:border-journal-muted hover:shadow-lg"
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className="grid size-6 shrink-0 place-items-center"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="size-5">
+                <circle
+                  cx="12"
+                  cy="8.5"
+                  r="3"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+                <path
+                  d="M6.5 19c.5-3.2 2.5-5 5.5-5s5 1.8 5.5 5"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            {isSidebarOpen ? <span>Profile</span> : null}
+          </Link>
         </header>
 
         <div
