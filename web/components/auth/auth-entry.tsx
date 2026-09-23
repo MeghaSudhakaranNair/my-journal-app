@@ -2,6 +2,7 @@
 
 import {
   loginSchema,
+  postalCodeSchema,
   registrationSchema,
   validationErrorsByField,
 } from "@/lib/auth-validation";
@@ -159,6 +160,19 @@ export function AuthEntry() {
         6,
       )} ${digits.slice(6)}`;
     }
+  }
+
+  function handlePostalCodeBlur(event: FocusEvent<HTMLInputElement>) {
+    const result = postalCodeSchema.safeParse(event.currentTarget.value);
+    setValidationErrors((currentErrors) => {
+      const nextErrors = { ...currentErrors };
+      if (result.success) delete nextErrors.postalCode;
+      else {
+        nextErrors.postalCode =
+          result.error.issues[0]?.message ?? "Enter a valid ZIP code.";
+      }
+      return nextErrors;
+    });
   }
 
   async function handleLoginSubmit(event: FormEvent<HTMLFormElement>) {
@@ -461,7 +475,23 @@ export function AuthEntry() {
                     <input
                       name="postalCode"
                       autoComplete="postal-code"
-                      className={inputClassName()}
+                      inputMode="numeric"
+                      placeholder="12345 or 12345-6789"
+                      aria-invalid={Boolean(validationErrors.postalCode)}
+                      aria-describedby={
+                        validationErrors.postalCode
+                          ? "register-postal-code-error"
+                          : undefined
+                      }
+                      onInput={() => clearFieldError("postalCode")}
+                      onBlur={handlePostalCodeBlur}
+                      className={inputClassName(
+                        Boolean(validationErrors.postalCode),
+                      )}
+                    />
+                    <FieldError
+                      id="register-postal-code-error"
+                      message={validationErrors.postalCode}
                     />
                   </label>
                   <label className={labelClassName}>

@@ -30,7 +30,7 @@ function ProfileField({ autoComplete, defaultValue, error, label, name, onClearE
   return (
     <label className="grid gap-2 text-sm font-semibold text-journal-text">
       <span>{label}{required ? <span className="text-red-700"> *</span> : null}</span>
-      <input type={type} name={name} defaultValue={defaultValue} autoComplete={autoComplete} placeholder={placeholder} required={required} aria-invalid={Boolean(error)} aria-describedby={error ? errorId : undefined} onInput={() => onClearError(name)} onBlur={(event) => onValidate(name, event)} className={`h-12 rounded-2xl border bg-white/75 px-4 font-normal text-journal-text outline-none transition placeholder:text-journal-muted/65 focus:ring-4 ${error ? "border-red-500 focus:border-red-600 focus:ring-red-200/60" : "border-journal-border focus:border-journal-muted focus:ring-journal-accent/20"}`} />
+      <input type={type} name={name} defaultValue={defaultValue} autoComplete={autoComplete} inputMode={name === "postalCode" ? "numeric" : undefined} placeholder={placeholder} required={required} aria-invalid={Boolean(error)} aria-describedby={error ? errorId : undefined} onInput={() => onClearError(name)} onBlur={(event) => onValidate(name, event)} className={`h-12 rounded-2xl border bg-white/75 px-4 font-normal text-journal-text outline-none transition placeholder:text-journal-muted/65 focus:ring-4 ${error ? "border-red-500 focus:border-red-600 focus:ring-red-200/60" : "border-journal-border focus:border-journal-muted focus:ring-journal-accent/20"}`} />
       {error ? <span id={errorId} role="alert" className="text-xs font-normal text-red-700">{error}</span> : null}
     </label>
   );

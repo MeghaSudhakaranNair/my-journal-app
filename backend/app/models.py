@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import re
 from typing import Any, Literal, Optional
 from uuid import UUID
 
@@ -69,6 +70,16 @@ class ProfileUpdate(BaseModel):
         if not allowed or not phone.startswith("+") and "+" in phone or not 7 <= len(digits) <= 15:
             raise ValueError("Enter a valid phone number containing 7 to 15 digits.")
         return phone
+
+    @field_validator("postalCode")
+    @classmethod
+    def validate_postal_code(cls, value: str) -> str:
+        postal_code = value.strip()
+        if postal_code and not re.fullmatch(r"\d{5}(?:-\d{4})?", postal_code):
+            raise ValueError(
+                "Enter a valid ZIP code, such as 12345 or 12345-6789."
+            )
+        return postal_code
 
 
 class Profile(BaseModel):

@@ -18,6 +18,14 @@ const phoneSchema = z
     { message: "Enter a valid phone number containing 7 to 15 digits." },
   );
 
+export const postalCodeSchema = z
+  .string()
+  .trim()
+  .refine(
+    (postalCode) => !postalCode || /^\d{5}(?:-\d{4})?$/.test(postalCode),
+    { message: "Enter a valid ZIP code, such as 12345 or 12345-6789." },
+  );
+
 export const passwordSchema = z
   .string()
   .min(1, "Password is required.")
@@ -50,7 +58,7 @@ export const registrationSchema = z
     addressLine2: optionalText,
     city: optionalText,
     region: optionalText,
-    postalCode: optionalText,
+    postalCode: postalCodeSchema,
     country: optionalText,
   })
   .refine((data) => data.confirmPassword === data.password, {
@@ -76,7 +84,7 @@ export const profileUpdateSchema = z.object({
   addressLine2: profileText(200, "Address line 2"),
   city: profileText(100, "City"),
   region: profileText(100, "State or region"),
-  postalCode: profileText(32, "Postal code"),
+  postalCode: postalCodeSchema,
   country: profileText(100, "Country"),
 });
 
